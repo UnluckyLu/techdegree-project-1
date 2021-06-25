@@ -1,3 +1,4 @@
+import shelve
 import random
 
 # my last steps are to make sure if they input anything but yes or no they get error checked.
@@ -5,16 +6,22 @@ import random
 
 while True:
     proceed = input("Welcome to my guessing game! Would you like to play? (YES/NO)")
-    if proceed.lower() == 'no':
-        exit("Thank you for checking out our guessing game!\nGoodbye!")
-    elif proceed.lower() == 'yes':
-        print(f"Let us begin! Hope you have fun!")
+    if proceed.lower() == 'yes':
+        print("Let us begin! Hope you have fun!")
         break
+    elif proceed.lower() == 'no':
+        exit("Thank you for checking out our guessing game!\nGoodbye!")
 
 def start_game(x):
     scrtNumber = random.randrange(1, x+1)
     guessNum = 0
     attempts = 1
+    highScore = 0
+    """
+    highScore = attempts
+    if attempts < highScore:
+        highScore = attempts
+        """
     guessNum = int(input(f"Enter your number guess between 1 and {x} here: "))    
     while guessNum != scrtNumber:
         if guessNum < scrtNumber:
@@ -35,21 +42,45 @@ def start_game(x):
             guessNum = int(input(f"\nGuess a number between 1 and {x}: "))
             attempts += 1
             continue
+    highScore = attempts
+    #if attempts < highScore:
+    #    highScore = attempts
+    #elif attempts > highScore:
+    #    highScore != attempts
     print("Congrats! You have guessed the correct number!\nYour attempt count was: {}".format(attempts))
+    while True:
+        restart = input("Would you like to play again? (YES/NO)")
+        if restart.lower() == "no":
+            exit("Thank you for checking out our guessing game!\nGoodbye!")
+        elif restart.lower() == "yes":
+            while True:
+    #x = input(("You will pick a number that will be between 1 and your chosen number: "))
+                try:                
+                    x = input(f"Your previous  highscore to beat is {highScore}.\nYou will pick a number that will be between 1 and your chosen number: ")
+                    start_game(int(x))
+                    break
+            #x = input(("You will pick a number that will be between 1 and your chosen number: "))
+                except ValueError:
+                    print("Your answer must be an integer greater than 1.")
+                    continue
+
+
+
+
 
 
 while True:
     #x = input(("You will pick a number that will be between 1 and your chosen number: "))
     try:
-        
         x = input(("You will pick a number that will be between 1 and your chosen number: "))
-        start_game(int(x))
+        newScore = start_game(int(x))
         break
         #x = input(("You will pick a number that will be between 1 and your chosen number: "))
     except ValueError:
         print("Your answer must be an integer greater than 1.")
         continue
 
+"""
 
 while True:
     restart = input("Would you like to play again? (YES/NO)")
@@ -60,15 +91,42 @@ while True:
         while True:
     #x = input(("You will pick a number that will be between 1 and your chosen number: "))
             try:                
-                x = input(("You will pick a number that will be between 1 and your chosen number: "))
+                x = input("You will pick a number that will be between 1 and your chosen number: ")
                 start_game(int(x))
                 break
             #x = input(("You will pick a number that will be between 1 and your chosen number: "))
             except ValueError:
                 print("Your answer must be an integer greater than 1.")
                 continue
+
+"""
             
 # so far the try exception block is working well
 # however, if I press enter for the yes or no, it let's me pick a number
 
 # current problem with the game is that when it is finished it goes back to pick a number
+
+"""
+scoreFile = shelve.open('score.txt')
+
+def updateScore(newScore):
+  if('score' in scoreFile):
+    score = scoreFile['score']
+    if(newScore not in score):
+      score.insert(0, newScore)
+
+    score.sort()
+    ranking = score.index(newScore)
+    ranking = len(score)-ranking
+  else:
+    score = [newScore]
+    ranking = 1
+
+  print(score)
+  print(f"Your new score rank is: {ranking}")
+  scoreFile['score'] = score
+  return ranking
+
+newScore = int(x)
+updateScore(newScore)
+"""
